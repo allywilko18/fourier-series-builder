@@ -1,53 +1,31 @@
-import { useCallback, useEffect, useReducer } from 'react';
-import type { WaveformId } from './physics/waveforms';
-import { initialHistory, canUndo, canRedo } from './state/history';
-import { reducer, initialState, MAX_PANELS } from './state/reducer';
-import { Panel } from './components/Panel';
+import { useCallback, useState } from 'react';
+import { WAVEFORMS, type WaveformId } from './physics/waveforms';
+import type { Viewport } from './lib/svgPath';
+import { FourierPlot } from './components/FourierPlot';
+import { Spectrum } from './spectrum/Spectrum';
+import { WaveformPicker } from './controls/WaveformPicker';
+import { HarmonicSlider } from './controls/HarmonicSlider';
+import { Readouts } from './components/Readouts';
+
+const VIEW: Viewport = {
+  width: 620,
+  height: 260,
+  xMin: -Math.PI,
+  xMax: Math.PI,
+  yMin: -1.45,
+  yMax: 1.45,
+};
 
 export default function App() {
-  const [state, dispatch] = useReducer(reducer, undefined, () =>
-    initialHistory(initialState()),
-  );
+  const [waveformId, setWaveformId] = useState<WaveformId>('square');
+  const [harmonics, setHarmonics] = useState(5);
+  const [showHarmonics, setShowHarmonics] = useState(false);
+  const [highlighted, setHighlighted] = useState<number | null>(null);
 
-  const { panels } = state.present;
+  const waveform = WAVEFORMS[waveformId];
 
-  const setWaveform = useCallback(
-    (panelId: string, waveform: WaveformId) =>
-      dispatch({ type: 'setWaveform', panelId, waveform }),
-    [],
-  );
-
-  const setHarmonics = useCallback(
-    (panelId: string, harmonics: number) =>
-      dispatch({ type: 'setHarmonics', panelId, harmonics }),
-    [],
-  );
-
-  const toggleHarmonics = useCallback(
-    (panelId: string) => dispatch({ type: 'toggleHarmonicCurves', panelId }),
-    [],
-  );
-
-  const removePanel = useCallback(
-    (panelId: string) => dispatch({ type: 'removePanel', panelId }),
-    [],
-  );
-
-  // Cmd/Ctrl+Z and Cmd/Ctrl+Shift+Z. The effect subscribes once and cleans up
-  // on unmount; dispatch is guaranteed stable by useReducer, so the empty
-  // dependency array is honest rather than a lie the linter tolerates.
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (!(event.metaKey || event.ctrlKey) || event.key.toLowerCase() !== 'z') {
-        return;
-      }
-      event.preventDefault();
-      dispatch({ type: event.shiftKey ? 'redo' : 'undo' });
-    }
-
-    window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
-  }, []);
+  // Stable identity, or memo on HarmonicCurve does nothing.
+  const handleHover = useCallback((n: number | null) => setHighlighted(n), []);
 
   return (
     <main className="app">
@@ -59,42 +37,38 @@ export default function App() {
         </p>
       </header>
 
-      <div className="toolbar">
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'undo' })}
-          disabled={!canUndo(state)}
-        >
-          Undo
-        </button>
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'redo' })}
-          disabled={!canRedo(state)}
-        >
-          Redo
-        </button>
-        <button
-          type="button"
-          onClick={() => dispatch({ type: 'addPanel' })}
-          disabled={panels.length >= MAX_PANELS}
-        >
-          Compare another
-        </button>
-      </div>
+      <div className="panel">
+        <WaveformPicker value={waveformId} onChange={setWaveformId} />
 
-      <div className="panels">
-        {panels.map((panel) => (
-          <Panel
-            key={panel.id}
-            panel={panel}
-            canRemove={panels.length > 1}
-            onSetWaveform={setWaveform}
-            onSetHarmonics={setHarmonics}
-            onToggleHarmonics={toggleHarmonics}
-            onRemove={removePanel}
-          />
-        ))}
+        <FourierPlot
+          waveform={waveform}
+          harmonics={harmonics}
+          showHarmonics={showHarmonics}
+          highlighted={highlighted}
+          onHover={handleHover}
+          view={VIEW}
+        />
+
+        <div className="panel-controls">
+          <HarmonicSlider value={harmonics} onChange={setHarmonics} />
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={showHarmonics}
+              onChange={() => setShowHarmonics((on) => !on)}
+            />
+            Show individual harmonics
+          </label>
+        </div>
+
+        <Spectrum
+          waveform={waveform}
+          harmonics={harmonics}
+          highlighted={highlighted}
+          onHover={handleHover}
+        />
+
+        <Readouts waveform={waveform} harmonics={harmonics} />
       </div>
     </main>
   );

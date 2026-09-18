@@ -1,111 +1,274 @@
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --ink: #16171a;
+  --ink-soft: #5c6068;
+  --ink-faint: #9aa0a8;
+  --paper: #fbfbfa;
+  --panel: #ffffff;
+  --rule: #e4e4e0;
+  --rule-strong: #c9c9c3;
+  --signal: #1f5fd0;
+  --signal-soft: #8fb2ec;
+  --radius: 6px;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
   color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+  background: var(--paper);
+  font-variant-numeric: tabular-nums;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+    --ink: #ececeb;
+    --ink-soft: #a5a8ad;
+    --ink-faint: #6e7278;
+    --paper: #131416;
+    --panel: #1b1c1f;
+    --rule: #2c2e32;
+    --rule-strong: #3d4045;
+    --signal: #62a0f5;
+    --signal-soft: #35507d;
   }
 }
 
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
+* {
   box-sizing: border-box;
 }
 
 body {
   margin: 0;
+  background: var(--paper);
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
+.app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
+.app-header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.35rem;
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
-p {
+
+.lede {
   margin: 0;
+  max-width: 54ch;
+  color: var(--ink-soft);
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+.toolbar {
+  display: flex;
+  gap: 0.5rem;
+  margin: 2rem 0 1.25rem;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--rule);
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+button {
+  font: inherit;
+  font-size: 0.875rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--panel);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  border-color: var(--ink-faint);
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+button.ghost {
+  border-color: transparent;
+  color: var(--ink-soft);
+}
+
+.panels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 1.25rem;
+  min-width: 0;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.waveform-picker {
+  display: flex;
+  gap: 0.3rem;
+  flex-wrap: wrap;
+}
+
+.chip {
+  font-size: 0.8125rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+}
+
+.chip.is-selected {
+  background: var(--signal);
+  border-color: var(--signal);
+  color: #fff;
+}
+
+.plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.grid-line {
+  stroke: var(--rule);
+  stroke-width: 1;
+}
+
+.axis-line {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+}
+
+.tick-label {
+  fill: var(--ink-faint);
+  font-size: 11px;
+}
+
+.curve-target {
+  stroke: var(--ink-faint);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+
+.curve-sum {
+  stroke: var(--signal);
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+
+.curve-harmonic {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  cursor: crosshair;
+}
+
+.curve-harmonic.is-highlighted {
+  stroke: var(--signal-soft);
+  stroke-width: 2;
+}
+
+.panel-controls {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.slider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.slider-label,
+.toggle {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.slider input {
+  flex: 1;
+  accent-color: var(--signal);
+}
+
+.slider-value {
+  min-width: 2.25rem;
+  text-align: right;
+  font-weight: 500;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.spectrum {
+  margin-top: 1.25rem;
+}
+
+.spectrum-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 64px;
+  border-bottom: 1px solid var(--rule-strong);
+}
+
+.spectrum-bar {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  cursor: crosshair;
+}
+
+.spectrum-bar-fill {
+  width: 100%;
+  background: var(--rule);
+  min-height: 1px;
+}
+
+.spectrum-bar.is-included .spectrum-bar-fill {
+  background: var(--signal-soft);
+}
+
+.spectrum-bar.is-highlighted .spectrum-bar-fill {
+  background: var(--signal);
+}
+
+.spectrum-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}
+
+.readouts {
+  display: flex;
+  gap: 2rem;
+  margin: 1.25rem 0 0;
+}
+
+.readout dt {
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+}
+
+.readout dd {
+  margin: 0.1rem 0 0;
+  font-size: 1.25rem;
+  font-weight: 500;
 }

@@ -1,4 +1,5 @@
-import { MAX_HARMONICS, MIN_HARMONICS } from '../state/reducer';
+const MIN = 1;
+const MAX = 80;
 
 interface Props {
   readonly value: number;
@@ -11,8 +12,8 @@ export function HarmonicSlider({ value, onChange }: Props) {
       <span className="slider-label">Harmonics</span>
       <input
         type="range"
-        min={MIN_HARMONICS}
-        max={MAX_HARMONICS}
+        min={MIN}
+        max= {MAX}
         step={1}
         value={value}
         // e.target.value is a string even on a range input, so the conversion

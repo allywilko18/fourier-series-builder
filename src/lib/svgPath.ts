@@ -55,31 +55,3 @@ export function toPath(
  * consecutive samples. Without this a discontinuity is drawn as a steep
  * diagonal joining the two branches, which misrepresents the target function.
  */
-export function toPathWithBreaks(
-  f: (x: number) => number,
-  view: Viewport,
-  threshold: number,
-  samples = 800,
-): string {
-  const span = view.xMax - view.xMin;
-  const commands: string[] = [];
-  let previous: number | null = null;
-
-  for (let i = 0; i <= samples; i++) {
-    const x = view.xMin + (i / samples) * span;
-    const y = f(x);
-    if (!Number.isFinite(y)) {
-      previous = null;
-      continue;
-    }
-
-    const px = toScreenX(x, view).toFixed(2);
-    const py = toScreenY(y, view).toFixed(2);
-    const jumped = previous !== null && Math.abs(y - previous) > threshold;
-
-    commands.push(`${previous === null || jumped ? 'M' : 'L'} ${px},${py}`);
-    previous = y;
-  }
-
-  return commands.join(' ');
-}

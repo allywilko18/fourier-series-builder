@@ -1,6 +1,6 @@
 import { memo, useMemo } from 'react';
 import type { Waveform } from '../physics/waveforms';
-import { toPathWithBreaks, type Viewport } from '../lib/svgPath';
+import { toPath, type Viewport } from '../lib/svgPath';
 
 interface Props {
   readonly waveform: Waveform;
@@ -13,7 +13,7 @@ interface Props {
  */
 export const TargetCurve = memo(function TargetCurve({ waveform, view }: Props) {
   const d = useMemo(
-    () => toPathWithBreaks((x) => waveform.f(x), view, 0.8),
+    () => toPath((x) => waveform.f(x), view, 0.8),
     [waveform, view],
   );
 
