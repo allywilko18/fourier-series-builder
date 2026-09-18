@@ -1,75 +1,48 @@
-# React + TypeScript + Vite
+# Fourier series builder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interactive visualisation of Fourier series convergence. Pick a waveform, add
+harmonics one at a time, and watch the partial sum close in on its target.
 
-Currently, two official plugins are available:
+**[Open the live demo](https://allywilko18.github.io/fourier-series-builder/)**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What it shows
 
-## React Compiler
+Any periodic function can be written as a sum of sines and cosines. This tool
+plots the partial sum alongside the function it is approximating, so you can
+see the approximation improve term by term.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Four waveforms: square, sawtooth, triangle and half-wave rectified
+- A coefficient spectrum showing the amplitude of each harmonic
+- Individual harmonics can be drawn and hovered to link them to the spectrum
+- Live RMS error, and the Gibbs overshoot at a jump discontinuity
 
-## Expanding the ESLint configuration
+The spectra are worth comparing. The square and sawtooth waves are
+discontinuous and their coefficients fall off as 1/n; the triangle wave is
+continuous and falls off as 1/n². Smoothness and convergence rate are the same
+fact seen from two directions.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## The maths
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+Coefficients come from the orthogonality of sines and cosines over a period:
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+    a_n = (1/π) ∫ f(x)cos(nx) dx
+    b_n = (1/π) ∫ f(x)sin(nx) dx
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Each was derived by hand for the four waveforms, then checked in the test
+suite against numerical integration of those integrals — so a slip in the
+algebra fails the build rather than quietly producing a plausible-looking
+curve.
 
-```
+## Running it
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+    npm install
+    npm run dev
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Tests:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+    npm test
 
-```
+## Structure
+
+`src/physics` holds the waveform definitions and the series maths, with no
+React imports — it is plain TypeScript and
