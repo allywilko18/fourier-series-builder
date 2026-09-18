@@ -14,7 +14,7 @@ function numericalB(w: Waveform, n: number, steps = 20000): number {
 describe('waveform coefficients', () => {
   for (const w of Object.values(WAVEFORMS)) {
     it(`${w.id}: analytic b_n matches numerical integration`, () => {
-      for (let n = 1; n <= 6; n++) {
+      for (let n = 1; n <= 100; n++) {
         expect(numericalB(w, n)).toBeCloseTo(w.b(n), 2);
       }
     });
